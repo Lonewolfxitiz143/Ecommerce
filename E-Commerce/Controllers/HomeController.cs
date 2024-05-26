@@ -1,10 +1,7 @@
 using E_Commerce.Models;
 using E_Commerce.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Project;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.FileSystemGlobbing;
 using System.Diagnostics;
 
 namespace E_Commerce.Controllers
@@ -31,26 +28,25 @@ namespace E_Commerce.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(ForImage obj)
+        public async Task<IActionResult> Create(ProductCreateViewModel requestModel)
         {
             string filename = "";
-            if (obj.Image != null)
+            if (requestModel.Image != null)
             {
                 string Folder = Path.Combine(environment.WebRootPath, "Images");
-                filename = Guid.NewGuid().ToString() + "_" + obj.Image.FileName;
+                filename = $"NewFolder/{Guid.NewGuid()}_{requestModel.Image.FileName}";
                 string Filepath = Path.Combine(Folder, filename);
-                await obj.Image.CopyToAsync(new FileStream(Filepath, FileMode.Create));
+                await requestModel.Image.CopyToAsync(new FileStream(Filepath, FileMode.Create));
 
-
-                Product p = new Product()
+                Product productToAdd = new Product()
                 {
-                    Name = obj.Name,
-                    Brand = obj.Brand,
-                    Category = obj.Category,
-                    Price = obj.Price,
+                    Name = requestModel.Name,
+                    Brand = requestModel.Brand,
+                    Category = requestModel.Category,
+                    Price = requestModel.Price,
                     Image = filename
                 };
-                productObj.ProductTable.Add(p);
+                productObj.ProductTable.Add(productToAdd);
                 productObj.SaveChanges();
                 return RedirectToAction("Index");
             }
