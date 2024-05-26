@@ -19,7 +19,20 @@ namespace E_Commerce.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var data = await productObj.ProductTable.ToListAsync();
+            var vatPerctange = 0.13m;
+            var data = await productObj.ProductTable
+                .Select(x => new ProductListResponseModel()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Brand = x.Brand,
+                    BrandCategory = $"{x.Brand}/{x.Category}",
+                    Category = x.Category,
+                    Image = x.Image,
+                    PriceWithVat = Convert.ToDecimal(x.Price) * vatPerctange
+                    Price = x.Price
+                })
+                .ToListAsync();
             return View(data);
         }
 

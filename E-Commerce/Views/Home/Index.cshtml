@@ -1,4 +1,4 @@
-﻿@model IEnumerable<E_Commerce.Models.Product>
+﻿@model IEnumerable<E_Commerce.ViewModel.ProductListResponseModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
@@ -35,7 +35,13 @@
                 @Html.DisplayNameFor(model => model.First().Category)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.First().BrandCategory)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.First().Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().PriceWithVat)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.First().Image)
@@ -57,7 +63,13 @@
                     @Html.DisplayFor(modelItem => item.Category)
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.BrandCategory)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PriceWithVat)
                 </td>
                 <td>
                    <img src="~/Images/@item.Image" height="100"  width="100" alt="Alternate Text" />
