@@ -1,4 +1,5 @@
 using E_Commerce.Models;
+using E_Commerce.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Project;
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +52,8 @@ namespace E_Commerce.Controllers
                 };
                 productObj.ProductTable.Add(p);
                 productObj.SaveChanges();
-                return RedirectToAction("Index"); }
+                return RedirectToAction("Index");
+            }
             return View();
         }
         public async Task<IActionResult> Delete(int? id)
@@ -64,32 +66,40 @@ namespace E_Commerce.Controllers
         }
         public async Task<IActionResult> Edit(int? id)
         {
-            var data = await productObj.ProductTable.FindAsync(id);
+            var data = await productObj.ProductTable
+                .Select(x => new ProductViewModel
+                {
+                    Brand = x.Brand,
+                    Category = x.Category,
+                    Id = x.Id,
+                    Name = x.Name,
+                    Price = x.Price
+                }).FirstOrDefaultAsync();
             return View(data);
         }
 
         [HttpPost]
-      public async Task<IActionResult> Edit( Product obj)
+        public async Task<IActionResult> Edit(ProductViewModel requestModel)
         {
-            var data = await productObj.ProductTable.FindAsync(obj.Id);
-            if (data==null)
+            var data = await productObj.ProductTable.FindAsync(requestModel.Id);
+            if (data == null)
             {
                 throw new Exception();
             }
             if (ModelState.IsValid)
             {
-                data.Name = obj.Name;
-                data.Brand = obj.Brand;
-                data.Category = obj.Category;
-                data.Price = obj.Price;
-              productObj.ProductTable.Update(data);
-               await productObj.SaveChangesAsync();
+                data.Name = requestModel.Name;
+                data.Brand = requestModel.Brand;
+                data.Category = requestModel.Category;
+                data.Price = requestModel.Price;
+                productObj.ProductTable.Update(data);
+                await productObj.SaveChangesAsync();
                 return RedirectToAction("Index");
 
             }
             return View();
         }
-            
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
